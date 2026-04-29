@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "jos",
+	"version": "${version}",
+	"name": "Just Obvious Stuff",
+	"authors": [
+		"xevalia"
+	],
+	"license": "CC0-1.0",
+	"icon": "assets/modid/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"com.jos.JustObviousStuffClient"
+		]
+	},
+	"mixins": [
+		"jos.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "1.21.11",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
