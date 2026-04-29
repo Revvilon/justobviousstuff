@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.impl.renderer.RendererManager;
 import net.minecraft.client.Camera;
@@ -68,6 +69,10 @@ public class JustObviousStuffClient implements ClientModInitializer {
         LocationManager.instance().init();
         KeyUtils.init();
 
+
+        ServerWorldEvents.LOAD.register((minecraftServer, server) -> {
+            KeyMapping.releaseAll();
+        });
 
         WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
             if (!isEnabled) return;
