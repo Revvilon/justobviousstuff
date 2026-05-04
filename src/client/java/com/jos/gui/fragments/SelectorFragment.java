@@ -31,6 +31,7 @@ public class SelectorFragment {
         body.horizontalAlignment(HorizontalAlignment.LEFT);
         body.verticalAlignment(VerticalAlignment.TOP);
         body.gap(5);
+        body.margins(Insets.of(5));
 
         var dropDown = new ClickDropdown(Component.literal("Locations") , (self, stack) -> {
             LocationManager.instance().locations().forEach(location -> {

@@ -5,10 +5,15 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.dialog.Input;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.jos.JustObviousStuffClient.isEnabled;
@@ -17,6 +22,7 @@ public class Locations {
     Vec3 pos;
     int num;
     Set<Integer> keys = new HashSet<>();
+    Set<String> commands = new HashSet<>();
 
     Locations(Vec3 pos) {
         this.pos = pos;
@@ -31,6 +37,14 @@ public class Locations {
     }
     public void removeKey(int key) {
         this.keys.remove(key);
+    }
+
+    public void addCommand(String command) {this.commands.add(command);}
+    public void removeCommand(String command) {this.commands.remove(command);}
+
+    public Set<String> commands() {
+        if (this.commands == null) this.commands = new HashSet<>();
+        return this.commands;
     }
 
     public Set<InputConstants.Key> keys() {
@@ -50,17 +64,6 @@ public class Locations {
 
 
     public void onEnter() {
-        if (LocationManager.instance().lastEntered() != this.num) {
-
-            KeyMapping.releaseAll();
-
-            if (!this.keys.isEmpty()) {
-                this.keys().forEach(key -> {
-                    KeyMapping.set(key, true);
-                });
-            }
-
-        }
         LocationManager.instance().lastEntered(this.num);
     }
     public void onLeave() {

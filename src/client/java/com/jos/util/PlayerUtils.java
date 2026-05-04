@@ -44,16 +44,27 @@ public class PlayerUtils {
 
         if (player == null || mc.level == null) return;
 
-        List<Locations> locationsList = LocationManager.instance().locations();
+        LocationManager locationManager = LocationManager.instance();
+
+        List<Locations> locationsList = locationManager.locations();
         locationsList.forEach((loc) -> {
             boolean currentlyInside = isInside(loc, player);
 
             if (currentlyInside) {
-                    loc.onEnter();
+                locationManager.onEnter(loc);
             }
             else {
-                loc.onLeave();
+                locationManager.lastEntered(0);
             }
         });
+    }
+
+    public static void sendCommand(String command) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+
+        String formatted = command.replaceFirst("/", "");
+
+        mc.player.connection.sendCommand(formatted);
     }
 }

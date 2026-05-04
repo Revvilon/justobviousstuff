@@ -22,9 +22,9 @@ import java.util.Set;
 public class TextRender implements  Renderable {
     private Vec3 pos;
     private int num;
-    private Set<InputConstants.Key> text;
+    private ArrayList<String> text;
 
-    public TextRender(Vec3 pos, int num, Set<InputConstants.Key> text) {
+    public TextRender(Vec3 pos, int num, ArrayList<String> text) {
         this.pos = pos;
         this.num = num;
         this.text = text;
@@ -36,8 +36,8 @@ public class TextRender implements  Renderable {
 
         lines.add(Component.literal("ID: " + this.num));
 
-        this.text.forEach((key) -> {
-            lines.add(key.getDisplayName());
+        this.text.forEach(line -> {
+            lines.add(Component.literal(line));
         });
 
 

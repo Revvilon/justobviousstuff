@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -34,13 +35,15 @@ public class KeyUtils {
     public static KeyMapping mouseKey;
 
     public static void registerKeyInputs() {
+        holdKeys();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
             while (guiKey.consumeClick()) {
                 client.setScreen(new LocationScreen());
             }
             while (releaseKey.consumeClick()) {
-                KeyMapping.releaseAll();
+                mouseLock = false;
+                releaseKeys();
             }
             while (toggleKey.consumeClick()) {
                 toggleKey.setDown(false);
@@ -81,5 +84,26 @@ public class KeyUtils {
                 CATEGORY
         ));
         registerKeyInputs();
+    }
+
+    static final Set<InputConstants.Key> keys = new  HashSet<>();
+    public static void holdKeys(@Nullable Set<InputConstants.Key> ke) {
+        keys.clear();
+        if (ke == null) return;
+        keys.addAll(ke);
+    }
+
+    public static void releaseKeys() {
+        keys.forEach(key -> {
+            KeyMapping.set(key, false);
+        });
+        holdKeys(null);
+    }
+
+    private static void holdKeys() {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (!isEnabled) releaseKeys();
+            keys.forEach((key) -> KeyMapping.set(key, true));
+        });
     }
 }

@@ -46,6 +46,7 @@ import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.client.input.InputQuirks;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -71,7 +72,7 @@ public class JustObviousStuffClient implements ClientModInitializer {
 
 
         ServerWorldEvents.LOAD.register((minecraftServer, server) -> {
-            KeyMapping.releaseAll();
+            KeyUtils.releaseKeys();
         });
 
         WorldRenderEvents.AFTER_ENTITIES.register((context) -> {
@@ -85,7 +86,11 @@ public class JustObviousStuffClient implements ClientModInitializer {
                 JosRender.getInstance().draw(Minecraft.getInstance(), circleRender.getPipeline());
 
 
-                Renderable textRender = new TextRender(location.pos(), location.num(), location.keys());
+                ArrayList<String> lines = new ArrayList<>();
+                lines.addAll(location.commands());
+                location.keys().forEach(key -> lines.add(key.getDisplayName().getString()));
+
+                Renderable textRender = new TextRender(location.pos(), location.num(), lines);
                 textRender.render(context);
             });
 
