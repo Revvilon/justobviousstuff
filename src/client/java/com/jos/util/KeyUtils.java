@@ -3,6 +3,7 @@ package com.jos.util;
 import com.jos.JustObviousStuffClient;
 import com.jos.gui.LocationScreen;
 import com.jos.gui.MouseScreen;
+import com.jos.gui.mouse.FreeMouse;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -35,21 +36,27 @@ public class KeyUtils {
     public static KeyMapping mouseKey;
 
     public static void registerKeyInputs() {
-        holdKeys();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
             while (guiKey.consumeClick()) {
                 client.setScreen(new LocationScreen());
             }
             while (releaseKey.consumeClick()) {
-                mouseLock = false;
-                releaseKeys();
+                Util.toggleHold(!shouldHold);
+                if (!shouldHold) {
+                    KeyMapping.releaseAll();
+                    Util.toggleMouseLock(false);
+                }
             }
             while (toggleKey.consumeClick()) {
                 toggleKey.setDown(false);
                 isEnabled = !isEnabled;
                 Util.sendMsg(Component.literal("Jos is now " + (isEnabled ? "enabled" : "disabled")));
-                if (!isEnabled) {KeyMapping.releaseAll();}
+                if (!isEnabled) {
+                    LocationManager.instance().resetActive();
+                    Util.toggleMouseLock(false);
+                    releaseKeys();
+                }
             }
             while (mouseKey.consumeClick()) {
                 mouseKey.setDown(false);
@@ -86,24 +93,12 @@ public class KeyUtils {
         registerKeyInputs();
     }
 
-    static final Set<InputConstants.Key> keys = new  HashSet<>();
-    public static void holdKeys(@Nullable Set<InputConstants.Key> ke) {
-        keys.clear();
-        if (ke == null) return;
-        keys.addAll(ke);
+
+    public static void holdKeys() {
+
     }
 
     public static void releaseKeys() {
-        keys.forEach(key -> {
-            KeyMapping.set(key, false);
-        });
-        holdKeys(null);
-    }
-
-    private static void holdKeys() {
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (!isEnabled) releaseKeys();
-            keys.forEach((key) -> KeyMapping.set(key, true));
-        });
+        KeyMapping.releaseAll();
     }
 }

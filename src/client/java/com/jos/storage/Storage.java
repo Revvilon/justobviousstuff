@@ -16,30 +16,53 @@ import java.util.ArrayList;
 import static com.jos.JustObviousStuffClient.MOD_ID;
 
 public class Storage {
+
+    public interface StorageUtil<T> {
+        void save(ArrayList<T> data);
+        ArrayList<T> load();
+    }
+
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .create();
 
     private static final Path FILE_PATH = FabricLoader.getInstance().getConfigDir().resolve("locations.json");
 
-    public static void save(ArrayList<Locations> locations) {
-        try (Writer writer = new FileWriter(FILE_PATH.toFile())) {
-            GSON.toJson(locations, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static class JsonStorage<T>  implements StorageUtil<T> {
+        private final Path path;
+        private final Type type;
+
+        public JsonStorage(Path path, TypeToken<ArrayList<T>> typeToken) {
+            this.path = path;
+            this.type = typeToken.getType();
+        }
+
+        @Override
+        public void save(ArrayList<T> data) {
+            try (Writer writer = new FileWriter(path.toFile())) {
+                GSON.toJson(data, writer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public ArrayList<T> load() {
+            File file = path.toFile();
+            if (!file.exists()) return new ArrayList<>();
+
+            try (Reader reader = new FileReader(file)) {
+                ArrayList<T> result = GSON.fromJson(reader, type);
+                return result != null ? result : new ArrayList<>();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
         }
     }
 
-    public static ArrayList<Locations> load() {
-        File file = FILE_PATH.toFile();
-        if (!file.exists()) return new ArrayList<>();
-
-        try (Reader reader = new FileReader(file)) {
-            Type listType = new TypeToken<ArrayList<Locations>>() {}.getType();
-            return GSON.fromJson(reader, listType);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-    }
+    public static final JsonStorage<Locations> LOCATION_HANDLER = new JsonStorage<>(
+            FabricLoader.getInstance().getConfigDir().resolve("locations.json"),
+            new TypeToken<ArrayList<Locations>>() {}
+    );
 }

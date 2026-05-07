@@ -12,10 +12,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
+import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.fabricmc.fabric.impl.renderer.RendererManager;
@@ -37,6 +39,8 @@ import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.logging.log4j.core.pattern.TextRenderer;
@@ -56,6 +60,8 @@ public class JustObviousStuffClient implements ClientModInitializer {
     public static final String MOD_ID = "jos";
     public static boolean isEnabled = false;
     public static boolean mouseLock = false;
+    public static boolean shouldHold = true;
+    public static boolean shouldText = false;
 
 
     private static KeyMapping toggleBind;
@@ -71,8 +77,11 @@ public class JustObviousStuffClient implements ClientModInitializer {
         KeyUtils.init();
 
 
-        ServerWorldEvents.LOAD.register((minecraftServer, server) -> {
-            KeyUtils.releaseKeys();
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((mc, client) -> {
+            LocationManager.instance().resetActive();
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(mc -> {
         });
 
         WorldRenderEvents.AFTER_ENTITIES.register((context) -> {

@@ -1,5 +1,6 @@
 package com.jos.render;
 
+import com.jos.JustObviousStuffClient;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
@@ -32,6 +33,7 @@ public class TextRender implements  Renderable {
 
     @Override
     public void render(WorldRenderContext context) {
+        if (!JustObviousStuffClient.shouldText) return;
         ArrayList<Component> lines = new ArrayList<>();
 
         lines.add(Component.literal("ID: " + this.num));

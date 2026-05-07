@@ -2,6 +2,7 @@ package com.jos.gui;
 
 import com.jos.gui.buttons.ClickButton;
 import com.jos.gui.buttons.ClickDropdown;
+import com.jos.gui.fragments.FooterFragment;
 import com.jos.gui.fragments.HeaderFragment;
 import com.jos.gui.fragments.InputsFragment;
 import com.jos.gui.fragments.SelectorFragment;
@@ -77,6 +78,8 @@ public class LocationScreen extends BaseOwoScreen<FlowLayout> {
         mainPanel.child(SelectorFragment.create(root));
 
         mainPanel.child(InputsFragment.create());
+
+        mainPanel.child(FooterFragment.create(root));
 
         root.child(mainPanel);
     }

@@ -11,6 +11,8 @@
     "requireAnnotations": false
   },
   "client": [
+    "ClientMixin",
+    "ConnectionMixin",
     "InputMixin",
     "RenderMixin"
   ]

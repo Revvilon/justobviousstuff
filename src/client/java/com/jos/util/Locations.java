@@ -61,12 +61,4 @@ public class Locations {
 
 
     public void num(int num) {this.num = num;}
-
-
-    public void onEnter() {
-        LocationManager.instance().lastEntered(this.num);
-    }
-    public void onLeave() {
-        LocationManager.instance().lastEntered(0);
-    }
 }

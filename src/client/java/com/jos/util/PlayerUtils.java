@@ -53,9 +53,6 @@ public class PlayerUtils {
             if (currentlyInside) {
                 locationManager.onEnter(loc);
             }
-            else {
-                locationManager.lastEntered(0);
-            }
         });
     }
 

@@ -59,7 +59,7 @@ public class SelectorFragment {
         var selected = UIComponents.label(Component.literal("Select Location: " + selectText));
 
         var save =  new ClickButton(Component.literal("Save"), but -> {
-            Storage.save(LocationManager.instance().locations());
+            Storage.LOCATION_HANDLER.save(LocationManager.instance().locations());
             Util.sendMsg(Component.literal("Saved successfully!"));
         });
 
